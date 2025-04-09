@@ -8,7 +8,7 @@
 
 语义三元组如下图所示，由 Act，Slot，Value 三个值构成，语义三元组的解析任务就是要从输入文本句中，解析出若干个表达语义的三元组。
 
-![](D:\CaAr\自然语言处理\paper\三元组示例.png)
+![](./img/三元组示例.png)
 
 在小组大作业中，我们将该任务转化成序列标注任务，然后使用深度学习的方法，将文本转化成 Word-Embedding，再通过解码器对输入文本进行标签预测，再根据标签来划分出句子中的各个槽值对。在本文中，我们从大模型的角度出发，研究直接生成语义三元组的效果。
 
@@ -43,7 +43,7 @@ then output those triplets one by one. Do not output any other information.
 
 这段基准Prompt 只描述了任务，除此之外没有给出任何方法提示，在后面的所有实验中都默认包含这段 Prompt 而不会粘贴在文中。基准效果如下（在之后的实验中，我们不会再展示截图，为了节省空间只将模型回答的纯文本粘贴出来）
 
-![](D:\CaAr\自然语言处理\个人大作业\img\base.png)
+![](./img/base.png)
 
 首先使用了一个非常简单的例句： `导航到天安门`，结果表明四个模型都能很好理解任务，都正确指出了核心的两个语义三元组 `inform(操作=导航)` 和 `inform(终点=天安门)`，并以正确的格式输出。但对于 `<slot>` 的选择仍然有些歧义和不稳定
 
@@ -51,7 +51,7 @@ then output those triplets one by one. Do not output any other information.
 
 首先我们研究在没有额外提示词工程技巧的引入下，四种大模型在 Zero-shot 下的净表现。Zero-shot 指的是除了任务描述和输入以外，不给大模型提供任何示例作为参考。而 One/Few-shot 提示方法则通过输入一些类似问题和问题答案让模型参考，并在同一个 Prompt 末尾提出新的问题，以此提升模型的推理能力。
 
-![](D:\CaAr\自然语言处理\个人大作业\img\zero-shot.png)
+![](./img/zero-shot.png)
 
 面对复杂的输入 `最快导航到上海交通大学附近`，四个模型也都能给出几乎完整的语义，但划分 `<slot>` 方面仍然有较大差异。图中所有标红的部分均为错误的标注。
 
@@ -62,7 +62,7 @@ then output those triplets one by one. Do not output any other information.
 
 **Few-shot：提供无关样例**
 
-![](D:\CaAr\自然语言处理\个人大作业\img\fewshot-无关.png)
+![](./img/fewshot-无关.png)
 
 
 
@@ -70,7 +70,7 @@ then output those triplets one by one. Do not output any other information.
 
 **Few-shot：提供有关样例**
 
-![](D:\CaAr\自然语言处理\个人大作业\img\fewshot-有关.png)
+![](./img/fewshot-有关.png)
 
 **结果分析**
 
@@ -90,13 +90,13 @@ CoT 是提示词工程中重要的一部分，通过让模型“有逻辑地思�
 
 下面我们先观察在没有任何逻辑链的帮助下，仅仅通过 One-Shot 给出几个关键 slot 类别的含义提示，四个大模型能否胜任：
 
-![](D:\CaAr\自然语言处理\个人大作业\img\复杂-fewshot.png)
+![](./img/复杂-fewshot.png)
 
 可以发现，四个大模型仅仅能做到通过我们 One-Shot 给出的 `位置` `偏好` 等 slot 的语义信息样例，把这特定几个三元组生成正确，**然而对于本测试样例最关键的逻辑推理部分，都给出了错误答案，甚至还将“高速路”放在了 `inform(偏好)` 里，完全背离了隐含推理的本意**
 
 下面我们引入 CoT 提示词技术，首先让模型 `Think setp by step`，并通过详细演示了逻辑链条是如何进行的、如何推理出每个三元组的。然后在最后同样给出输入例句，CoT + Few-shot 的结果如下所示
 
-![](D:\CaAr\自然语言处理\个人大作业\img\复杂-fewshot-cot.png)
+![](./img/复杂-fewshot-cot.png)
 
 **结果分析**
 
